@@ -18,8 +18,10 @@ env:
     - ANSIBLE_CONFIG=tests/ansible.cfg
     - ANSIBLE_VERSION=2.5
   matrix:
-    - SUITE=plain
+    - SUITE=docker
     - SUITE=latest
+    - SUITE=ping
+    - SUITE=plain
 
 before_install:
   - rvm @global do gem install inspec
