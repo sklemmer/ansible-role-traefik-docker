@@ -18,35 +18,45 @@ control "general" do
     its('repo') { should eq 'traefik'}
     its('tag') { should eq 'alpine'}
   end
-
-    # container status
-    describe docker_container('traefik') do
-      it { should exist }
-      it { should be_running }
-      its('image') { should eq 'traefik:alpine' }
-      its('repo') { should eq 'traefik' }
-      its('tag') { should eq 'alpine' }
-      its('ports') { should eq "0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp, 0.0.0.0:8080->8080/tcp" }
-    end
-    # config file existence
-    describe file('/etc/traefik/traefik.toml') do
-      it { should exist }
-      its('type') { should eq :file }
-    end
+  # container status
+  describe docker_container('traefik') do
+    it { should exist }
+    it { should be_running }
+    its('image') { should eq 'traefik:alpine' }
+    its('repo') { should eq 'traefik' }
+    its('tag') { should eq 'alpine' }
+    its('ports') { should eq "0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp, 0.0.0.0:8080->8080/tcp" }
+  end
+  # config file existence
+  describe file('/etc/traefik/traefik.toml') do
+    it { should exist }
+    its('type') { should eq :file }
+  end
 end
 
 ##
-# docker enable
+# acme enable
 ##
-control "docker" do
+control "acme" do
   impact 0.7
-  title "Test traefik with docker backend configuration"
+  title "Test traefik with acme challenge"
 
+
+  describe file('/etc/traefik/traefik.toml') do
+    it { should exist }
+    its('type') { should eq :file }
+  end
   # config values
   describe toml('/etc/traefik/traefik.toml') do
     its(['docker', 'domain']) { should eq 'docker.local' }
     its(['docker', 'endpoint']) { should eq 'unix:///var/run/docker.sock' }
     its(['docker', 'watch']) { should eq true }
+
+    its(['acme', 'email']) { should_not eq '' }
+    its(['acme', 'storage']) { should eq 'acme.json' }
+    its(['acme', 'entryPoint']) { should eq 'https' }
+    its(['acme', 'onHostRule']) { should eq 'true' }
+    its(['acme', 'httpChallenge', 'entryPoint']) { should eq 'http' }
   end
 
   # second container
@@ -61,18 +71,9 @@ control "docker" do
   describe port(8000) do
     it { should_not be_listening }
   end
-  # normal http endpoint
   describe http('http://localhost',
               method: 'GET',
-              headers: {'Host' => 'whoami.docker.local'}) do
-    its('status') { should cmp 200 }
-    its('body') { should include 'I\'m' }
-    its('headers.Content-Type') { should cmp 'text/plain; charset=utf-8' }
-  end
-  # https endpoint
-  describe http('https://localhost',
-              method: 'GET',
-              headers: {'Host' => 'whoami.docker.local'}) do
+                headers: {'Host' => 'whoami.docker.local'}) do
     its('status') { should cmp 200 }
     its('body') { should include 'I\'m' }
     its('headers.Content-Type') { should cmp 'text/plain; charset=utf-8' }

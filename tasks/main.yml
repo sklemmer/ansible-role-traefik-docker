@@ -23,6 +23,7 @@
 
 - set_fact:
     exposed_ports: "{{ exposed_ports }} + [ '{{ traefik_https_port }}:443' ]"
+    traefik_volumes: "{{ traefik_volumes }} + [ '{{ traefik_acme_volume }}' ]"
   when: traefik_enable_https == True
 
 # download traefik image
@@ -36,7 +37,7 @@
 - name: Ensure traefik container is running
   docker_container:
     name: '{{ traefik_container_name }}'
-    restart: always
+    restart_policy: always
     image: '{{ image }}'
     state: started
     ports: '{{ exposed_ports }}'

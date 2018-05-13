@@ -27,12 +27,19 @@ verifier:
   name: inspec
 
 suites:
-  - name: plain
+  - name: acme
     provisioner:
-      playbook: "./tests/plain/test.yml"
+      playbook: "./tests/acme/test.yml"
     verifier:
       inspec_tests:
-        - path: tests/plain/
+        - path: tests/acme/
+
+  - name: docker
+    provisioner:
+      playbook: "./tests/docker/test.yml"
+    verifier:
+      inspec_tests:
+        - path: tests/docker/
 
   - name: latest
     provisioner:
@@ -48,9 +55,9 @@ suites:
       inspec_tests:
         - path: tests/ping/
 
-  - name: docker
+  - name: plain
     provisioner:
-      playbook: "./tests/docker/test.yml"
+      playbook: "./tests/plain/test.yml"
     verifier:
       inspec_tests:
-        - path: tests/docker/
+        - path: tests/plain/

@@ -21,6 +21,18 @@
     - traefik_config_docker.endpoint is defined
     - traefik_config_docker.socket is defined
 
+  # Backend: ACME definition
+- name: Define traefik acme configuration
+  set_fact:
+    traefik_config_acme: "{{ traefik_config_acme|combine({ item.key: item.value }) }}"
+  when: item.value != "" and 'docker' in traefik_enable
+  with_dict: "{{ traefik_default_acme }}"
+
+- assert:
+    that: traefik_config_acme.email is defined
+    msg: an email must be defined to use ACME
+  when: "'acme' in traefik_enable"
+
 # configure traefik
 - name: Ensure config directory does exist
   file:

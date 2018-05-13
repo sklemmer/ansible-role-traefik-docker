@@ -1,0 +1,36 @@
+# install docker
+- hosts: all
+  remote_user: root
+  become: true
+  become_method: sudo
+  roles:
+    - docker
+
+# acme
+- hosts: all
+  remote_user: root
+  become: true
+  become_method: sudo
+  vars:
+    traefik_enable:
+      - docker
+      - acme
+    traefik_config_docker:
+      domain: "docker.local"
+    traefik_config_acme:
+      email: svenklemmer@aol.com
+  roles:
+    - ansible-role-traefik-docker
+
+- hosts: all
+  remote_user: root
+  become: true
+  become_method: sudo
+  tasks:
+    # docker run -d -p 8000:8000 --name whoami -t jwilder/whoami
+    - name: Run whoami container
+      docker_container:
+        name: whoami
+        image: jwilder/whoami
+        labels:
+          traefik.frontend.rule: 'Host:whoami.docker.local'

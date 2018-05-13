@@ -18,6 +18,7 @@ env:
     - ANSIBLE_CONFIG=tests/ansible.cfg
     - ANSIBLE_VERSION=2.5
   matrix:
+    - SUITE=acme
     - SUITE=docker
     - SUITE=latest
     - SUITE=ping

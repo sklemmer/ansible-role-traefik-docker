@@ -12,11 +12,20 @@
   {% endif %}
 {% endmacro %}
 
+# General Section
+{% if traefik_enable_https %}
+  defaultEntryPoints = ["https","http"]
+{% else %}
+  defaultEntryPoints = ["http"]
+{% endif %}
+
+# Retry Definition
+[retry]
+
 {% if traefik_enable_ui %}
 # API definition
 [api]
 {% endif %}
-
 
 {% if 'ping' in traefik_enable %}
 # Ping Definition
@@ -33,4 +42,15 @@
   {% for key,value in traefik_config_docker.iteritems() %}
     {{ add_kv(key, value) }}
   {% endfor %}
+{% endif %}
+
+{% if 'acme' in traefik_enable %}
+# Backend: ACME Definition
+[acme]
+  {% for key,value in traefik_config_docker.iteritems() %}
+    {{ add_kv(key, value) }}
+  {% endfor %}
+
+  [acme.httpChallenge]
+  entryPoint = "http"
 {% endif %}

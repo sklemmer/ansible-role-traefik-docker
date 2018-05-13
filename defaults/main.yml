@@ -12,6 +12,7 @@ traefik_http_port: 80
 
 traefik_enable_https: True
 traefik_https_port: 443
+traefik_acme_volume: '/opt/traefik/acme.json:/acme.json'
 
 traefik_enable_ui: True
 traefik_ui_port: 8080
@@ -36,3 +37,9 @@ traefik_default_docker:
   exposedByDefault: true
   usebindportip: false
   swarmMode: false
+
+traefik_config_acme: {}
+traefik_default_acme:
+  storage: acme.json
+  entryPoint: https
+  onHostRule: true
