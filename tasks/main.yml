@@ -1,0 +1,43 @@
+---
+# tasks file for ansible-role-traefik-docker
+- name: Test if docker is installed
+  command: docker
+  register: result
+  ignore_errors: True
+
+- assert:
+    that: result is success
+
+- set_fact:
+    traefik_volumes:
+      - '{{ traefik_config_file }}:{{ traefik_config_interal_file }}'
+    exposed_ports: []
+    image: '{{ traefik_image }}:{{ traefik_version }}'
+
+- set_fact:
+    exposed_ports: "{{ exposed_ports }} + [ '{{ traefik_http_port }}:80' ]"
+
+- set_fact:
+    exposed_ports: "{{ exposed_ports }} + [ '{{ traefik_ui_port }}:8080' ]"
+  when: traefik_enable_ui == True
+
+- set_fact:
+    exposed_ports: "{{ exposed_ports }} + [ '{{ traefik_https_port }}:443' ]"
+  when: traefik_enable_https == True
+
+# download traefik image
+- name: Ensure traefik image exists
+  docker_image:
+    name: '{{ image }}'
+
+- import_tasks: configure.yml
+
+# create traefik container
+- name: Ensure traefik container is running
+  docker_container:
+    name: '{{ traefik_container_name }}'
+    restart: always
+    image: '{{ image }}'
+    state: started
+    ports: '{{ exposed_ports }}'
+    volumes: '{{ traefik_volumes }}'

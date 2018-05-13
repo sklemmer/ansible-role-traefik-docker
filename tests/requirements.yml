@@ -1,0 +1,3 @@
+- name: docker
+  src: https://github.com/sklemmer/ansible-role-docker.git
+  version: origin/master

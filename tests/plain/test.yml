@@ -1,0 +1,15 @@
+# install docker
+- hosts: all
+  remote_user: root
+  become: true
+  become_method: sudo
+  roles:
+    - docker
+
+# plain
+- hosts: all
+  remote_user: root
+  become: true
+  become_method: sudo
+  roles:
+    - ansible-role-traefik-docker

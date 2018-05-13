@@ -1,0 +1,38 @@
+sudo: required
+language: python
+python: "2.7"
+
+cache: pip
+
+services: docker
+
+addons:
+  apt:
+    update: True
+    packages:
+      - python-apt
+      - ruby-dev
+
+env:
+  global:
+    - ANSIBLE_CONFIG=tests/ansible.cfg
+    - ANSIBLE_VERSION=2.5
+  matrix:
+    - SUITE=plain
+    - SUITE=latest
+
+before_install:
+  - rvm @global do gem install inspec
+  - inspec --version
+
+install:
+  - pip install ansible==${ANSIBLE_VERSION}
+
+before_script:
+  - mkdir -p tests/external
+  - ansible-galaxy install -p tests/external -r tests/requirements.yml
+
+script:
+  - ansible-playbook -i tests/inventory tests/${SUITE}/test.yml --syntax-check
+  - ansible-playbook -i tests/inventory tests/${SUITE}/test.yml
+  - inspec exec tests/${SUITE}/role_spec.rb

@@ -1,0 +1,38 @@
+---
+# defaults file for ansible-role-traefik-docker
+traefik_image: traefik
+traefik_version: alpine
+
+traefik_container_name: traefik
+
+traefik_config_file: /etc/traefik/traefik.toml
+traefik_config_interal_file: /etc/traefik/traefik.toml
+
+traefik_http_port: 80
+
+traefik_enable_https: True
+traefik_https_port: 443
+
+traefik_enable_ui: True
+traefik_ui_port: 8080
+
+traefik_enable: []
+
+traefik_volumes: []
+
+# configs
+traefik_config_ping: {}
+
+traefik_default_ping:
+  entrypoint: traefik
+
+traefik_config_docker: {}
+#  domain: "docker.localhost"
+
+traefik_default_docker:
+  endpoint: "unix:///var/run/docker.sock"
+  socket: /var/run/docker.sock
+  watch: true
+  exposedByDefault: true
+  usebindportip: false
+  swarmMode: false

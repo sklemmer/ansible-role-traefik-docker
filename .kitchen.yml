@@ -1,0 +1,56 @@
+---
+driver:
+  name: vagrant
+  network:
+    - ['private_network', {ip: '192.168.98.100'}]
+
+platforms:
+  - name: ubuntu-16.04
+  #- name: ubuntu-18.04
+
+provisioner:
+  name: ansible_playbook
+  role_name: ansible-role-traefik-docker
+  ansible_cfg_path: "./tests/ansible.cfg"
+  ansible_inventory: "./tests/inventory"
+  requirements_path: tests/requirements.yml
+  #### general
+  ansible_verbose: true
+  #idempotency_test: true
+  diff: true
+  #https://github.com/geerlingguy/ansible-role-mysql/issues/212
+  sudo_command: sudo -H
+  custom_post_install_command: |
+    sudo apt-get install -y -q python-pip
+
+verifier:
+  name: inspec
+
+suites:
+  - name: plain
+    provisioner:
+      playbook: "./tests/plain/test.yml"
+    verifier:
+      inspec_tests:
+        - path: tests/plain/
+
+  - name: latest
+    provisioner:
+      playbook: "./tests/latest/test.yml"
+    verifier:
+      inspec_tests:
+        - path: tests/latest/
+
+  - name: ping
+    provisioner:
+      playbook: "./tests/ping/test.yml"
+    verifier:
+      inspec_tests:
+        - path: tests/ping/
+
+  - name: docker
+    provisioner:
+      playbook: "./tests/docker/test.yml"
+    verifier:
+      inspec_tests:
+        - path: tests/docker/

@@ -1,0 +1,18 @@
+# install docker
+- hosts: all
+  remote_user: root
+  become: true
+  become_method: sudo
+  roles:
+    - docker
+
+# ping
+- hosts: all
+  remote_user: root
+  become: true
+  become_method: sudo
+  vars:
+    traefik_enable:
+      - ping
+  roles:
+    - ansible-role-traefik-docker

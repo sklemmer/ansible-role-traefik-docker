@@ -1,0 +1,36 @@
+#{{ ansible_managed }}
+
+{% macro add_kv(k, v) %}
+  {% if v is string %}
+    {{ k }} = '{{ v }}'
+  {% elif v == true %}
+    {{ k }} = true
+  {% elif v == false %}
+    {{ k }} = false
+  {% else %}
+    {{ k }} = {{ v }}
+  {% endif %}
+{% endmacro %}
+
+{% if traefik_enable_ui %}
+# API definition
+[api]
+{% endif %}
+
+
+{% if 'ping' in traefik_enable %}
+# Ping Definition
+[ping]
+  {% for key,value in traefik_config_ping.iteritems() %}
+    {{ add_kv(key, value) }}
+  {% endfor %}
+{% endif %}
+
+
+{% if 'docker' in traefik_enable %}
+# Backend: Docker Definition
+[docker]
+  {% for key,value in traefik_config_docker.iteritems() %}
+    {{ add_kv(key, value) }}
+  {% endfor %}
+{% endif %}

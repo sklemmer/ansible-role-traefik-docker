@@ -1,0 +1,7 @@
+/**/*.retry
+.vagrant
+ubuntu-xenial-*.log
+tests/external
+.kitchen/
+.kitchen.local.yml
+Gemfile.lock

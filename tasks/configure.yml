@@ -1,0 +1,35 @@
+---
+# Ping definition
+- name: Define traefik ping configuration
+  set_fact:
+    traefik_config_ping: "{{ traefik_config_ping|combine({ item.key: item.value }) }}"
+  when: item.value != "" and 'ping' in traefik_enable
+  with_dict: "{{ traefik_default_ping }}"
+
+# Backend: Docker definition
+- name: Define traefik docker configuration
+  set_fact:
+    traefik_config_docker: "{{ traefik_config_docker|combine({ item.key: item.value }) }}"
+  when: item.value != "" and 'docker' in traefik_enable
+  with_dict: "{{ traefik_default_docker }}"
+
+- set_fact:
+    traefik_volumes: "{{ traefik_volumes }} + [ '{{ traefik_config_docker.socket }}:{{ traefik_config_docker.socket }}' ]"
+  when:
+    - "'docker' in traefik_enable"
+    - traefik_config_docker is defined
+    - traefik_config_docker.endpoint is defined
+    - traefik_config_docker.socket is defined
+
+# configure traefik
+- name: Ensure config directory does exist
+  file:
+    state: directory
+    path: '{{ traefik_config_file | dirname }}'
+
+- name: Ensure traefik config does exist
+  template:
+    backup: yes
+    src: traefik.toml.j2
+    dest: '{{ traefik_config_file }}'
+  register: result
