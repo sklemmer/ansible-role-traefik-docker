@@ -28,6 +28,8 @@ verifier:
 
 suites:
   - name: acme
+    driver_config:
+      hostname: '54.229.34.169'
     provisioner:
       playbook: "./tests/acme/test.yml"
     verifier:

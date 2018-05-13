@@ -12,7 +12,10 @@ traefik_http_port: 80
 
 traefik_enable_https: True
 traefik_https_port: 443
-traefik_acme_volume: '/opt/traefik/acme.json:/acme.json'
+
+traefik_acme_file: '/etc/traefik/acme.json'
+traefik_acme_internal_file: /acme.json
+traefik_acme_volume: '{{ traefik_acme_file }}:{{ traefik_acme_internal_file }}'
 
 traefik_enable_ui: True
 traefik_ui_port: 8080
@@ -21,15 +24,15 @@ traefik_enable: []
 
 traefik_volumes: []
 
+traefik_debug: True
+
 # configs
 traefik_config_ping: {}
-
 traefik_default_ping:
   entrypoint: traefik
 
 traefik_config_docker: {}
 #  domain: "docker.localhost"
-
 traefik_default_docker:
   endpoint: "unix:///var/run/docker.sock"
   socket: /var/run/docker.sock
@@ -43,3 +46,4 @@ traefik_default_acme:
   storage: acme.json
   entryPoint: https
   onHostRule: true
+  dry-run: False

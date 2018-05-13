@@ -71,9 +71,17 @@ control "acme" do
   describe port(8000) do
     it { should_not be_listening }
   end
+  # normal http endpoint
   describe http('http://localhost',
               method: 'GET',
-                headers: {'Host' => 'whoami.docker.local'}) do
+              headers: {'Host' => 'whoami.docker.local'}) do
+    its('status') { should cmp 302 }
+    its('headers.Content-Type') { should cmp 'text/plain; charset=utf-8' }
+  end
+  # https endpoint
+  describe http('https://localhost',
+              method: 'GET',
+              headers: {'Host' => 'whoami.docker.local'}) do
     its('status') { should cmp 200 }
     its('body') { should include 'I\'m' }
     its('headers.Content-Type') { should cmp 'text/plain; charset=utf-8' }

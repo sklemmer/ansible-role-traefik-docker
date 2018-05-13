@@ -1,5 +1,7 @@
 #{{ ansible_managed }}
 
+debug = true
+
 {% macro add_kv(k, v) %}
   {% if v is string %}
     {{ k }} = '{{ v }}'
@@ -13,19 +15,37 @@
 {% endmacro %}
 
 # General Section
+debug = {{ traefik_debug }}
+
+
 {% if traefik_enable_https %}
   defaultEntryPoints = ["https","http"]
 {% else %}
   defaultEntryPoints = ["http"]
 {% endif %}
 
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":{{ traefik_http_port }}"
+{% if traefik_enable_https %}
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+  address = ":{{ traefik_https_port }}"
+    [entryPoints.https.tls]
+{% endif %}
+
+
 # Retry Definition
 [retry]
+
 
 {% if traefik_enable_ui %}
 # API definition
 [api]
 {% endif %}
+
 
 {% if 'ping' in traefik_enable %}
 # Ping Definition
@@ -44,12 +64,17 @@
   {% endfor %}
 {% endif %}
 
+
 {% if 'acme' in traefik_enable %}
 # Backend: ACME Definition
 [acme]
-  {% for key,value in traefik_config_docker.iteritems() %}
+  {% for key,value in traefik_config_acme.iteritems() %}
     {{ add_kv(key, value) }}
   {% endfor %}
+
+  {% if traefik_config_acme.dry-run == true %}
+  caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  {% endif %}
 
   [acme.httpChallenge]
   entryPoint = "http"

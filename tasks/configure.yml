@@ -39,6 +39,13 @@
     state: directory
     path: '{{ traefik_config_file | dirname }}'
 
+- name: Ensure acme does exist
+  file:
+    state: touch
+    path: '{{ traefik_acme_file }}'
+    mode: 0600
+  when: "'acme' in traefik_enable"
+
 - name: Ensure traefik config does exist
   template:
     backup: yes
