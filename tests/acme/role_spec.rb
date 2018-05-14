@@ -55,7 +55,7 @@ control "acme" do
     its(['acme', 'email']) { should_not eq '' }
     its(['acme', 'storage']) { should eq 'acme.json' }
     its(['acme', 'entryPoint']) { should eq 'https' }
-    its(['acme', 'onHostRule']) { should eq 'true' }
+    its(['acme', 'onHostRule']) { should eq true }
     its(['acme', 'httpChallenge', 'entryPoint']) { should eq 'http' }
   end
 
@@ -76,14 +76,6 @@ control "acme" do
               method: 'GET',
               headers: {'Host' => 'whoami.docker.local'}) do
     its('status') { should cmp 302 }
-    its('headers.Content-Type') { should cmp 'text/plain; charset=utf-8' }
-  end
-  # https endpoint
-  describe http('https://localhost',
-              method: 'GET',
-              headers: {'Host' => 'whoami.docker.local'}) do
-    its('status') { should cmp 200 }
-    its('body') { should include 'I\'m' }
     its('headers.Content-Type') { should cmp 'text/plain; charset=utf-8' }
   end
 end

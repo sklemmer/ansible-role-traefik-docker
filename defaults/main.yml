@@ -24,7 +24,7 @@ traefik_enable: []
 
 traefik_volumes: []
 
-traefik_debug: True
+traefik_debug: true
 
 # configs
 traefik_config_ping: {}
@@ -41,9 +41,9 @@ traefik_default_docker:
   usebindportip: false
   swarmMode: false
 
+traefik_acme_dry_run: True
 traefik_config_acme: {}
 traefik_default_acme:
   storage: acme.json
   entryPoint: https
   onHostRule: true
-  dry-run: False

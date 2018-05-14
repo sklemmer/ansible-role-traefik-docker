@@ -1,7 +1,5 @@
 #{{ ansible_managed }}
 
-debug = true
-
 {% macro add_kv(k, v) %}
   {% if v is string %}
     {{ k }} = '{{ v }}'
@@ -15,7 +13,7 @@ debug = true
 {% endmacro %}
 
 # General Section
-debug = {{ traefik_debug }}
+{{ add_kv('debug', traefik_debug) }}
 
 
 {% if traefik_enable_https %}
@@ -72,8 +70,8 @@ debug = {{ traefik_debug }}
     {{ add_kv(key, value) }}
   {% endfor %}
 
-  {% if traefik_config_acme.dry-run == true %}
-  caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  {% if traefik_acme_dry_run == true %}
+    {{ add_kv('caServer', 'https://acme-staging-v02.api.letsencrypt.org/directory') }}
   {% endif %}
 
   [acme.httpChallenge]
