@@ -26,7 +26,7 @@ control "general" do
       its('image') { should eq 'traefik:alpine' }
       its('repo') { should eq 'traefik' }
       its('tag') { should eq 'alpine' }
-      its('ports') { should eq "0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp, 0.0.0.0:8080->8080/tcp" }
+      its('ports') { should eq "0.0.0.0:80->80/tcp, 0.0.0.0:8080->8080/tcp" }
     end
     # config file existence
     describe file('/etc/traefik/traefik.toml') do
