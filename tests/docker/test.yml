@@ -14,6 +14,7 @@
   vars:
     traefik_enable:
       - docker
+    traefik_enable_https: False
     traefik_config_docker:
       domain: "docker.local"
   roles:

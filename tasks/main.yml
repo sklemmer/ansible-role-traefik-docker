@@ -38,6 +38,7 @@
   docker_container:
     name: '{{ traefik_container_name }}'
     restart_policy: always
+    restart: true
     image: '{{ image }}'
     state: started
     ports: '{{ exposed_ports }}'

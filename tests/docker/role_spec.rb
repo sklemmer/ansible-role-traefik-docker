@@ -76,7 +76,7 @@ control "reachabiity" do
   title "Test traefik reachability"
 
   # port existence
-  ports = [ 80, 8080, 443]
+  ports = [ 80, 8080 ]
   ports.each do |p|
     describe port("#{p}") do
       it { should be_listening }
