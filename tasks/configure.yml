@@ -3,14 +3,14 @@
 - name: Define traefik ping configuration
   set_fact:
     traefik_config_ping: "{{ traefik_config_ping|combine({ item.key: item.value }) }}"
-  when: item.value != "" and 'ping' in traefik_enable
+  when: item.value != "" and 'ping' in traefik_enable and item.key not in traefik_config_ping
   with_dict: "{{ traefik_default_ping }}"
 
 # Backend: Docker definition
 - name: Define traefik docker configuration
   set_fact:
     traefik_config_docker: "{{ traefik_config_docker|combine({ item.key: item.value }) }}"
-  when: item.value != "" and 'docker' in traefik_enable
+  when: item.value != "" and 'docker' in traefik_enable and item.key not in traefik_config_docker
   with_dict: "{{ traefik_default_docker }}"
 
 - set_fact:
@@ -25,7 +25,7 @@
 - name: Define traefik acme configuration
   set_fact:
     traefik_config_acme: "{{ traefik_config_acme|combine({ item.key: item.value }) }}"
-  when: item.value != "" and 'docker' in traefik_enable
+  when: item.value != "" and 'docker' in traefik_enable and item.key not in traefik_config_acme
   with_dict: "{{ traefik_default_acme }}"
 
 - assert:
