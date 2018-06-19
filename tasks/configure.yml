@@ -25,7 +25,10 @@
 - name: Define traefik acme configuration
   set_fact:
     traefik_config_acme: "{{ traefik_config_acme|combine({ item.key: item.value }) }}"
-  when: item.value != "" and 'acme' in traefik_enable and item.key not in traefik_config_acme
+  when:
+    - "item.value != ''"
+    - "'acme' in traefik_enable"
+    - item.key not in traefik_config_acme
   with_dict: "{{ traefik_default_acme }}"
 
 - assert:
