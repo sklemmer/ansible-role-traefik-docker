@@ -44,6 +44,6 @@ traefik_default_docker:
 traefik_acme_dry_run: True
 traefik_config_acme: {}
 traefik_default_acme:
-  storage: acme.json
+  storage: '{{ traefik_acme_internal_file }}'
   entryPoint: https
   onHostRule: true

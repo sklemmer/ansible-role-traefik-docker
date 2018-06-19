@@ -25,12 +25,12 @@
 - name: Define traefik acme configuration
   set_fact:
     traefik_config_acme: "{{ traefik_config_acme|combine({ item.key: item.value }) }}"
-  when: item.value != "" and 'docker' in traefik_enable and item.key not in traefik_config_acme
+  when: item.value != "" and 'acme' in traefik_enable and item.key not in traefik_config_acme
   with_dict: "{{ traefik_default_acme }}"
 
 - assert:
-    that: traefik_config_acme.email is defined
-    msg: an email must be defined to use ACME
+    that: traefik_config_acme.email is defined and traefik_config_acme.storage is defined
+    msg: an email and storage must be defined to use ACME
   when: "'acme' in traefik_enable"
 
 # configure traefik
